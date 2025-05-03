@@ -1,52 +1,175 @@
+/* Основные стили (оставить без изменений) */
 body {
     background-color: #0f0f1a;
     color: #e0e0ff;
     font-family: 'Orbitron', sans-serif;
     padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 .game-title {
     color: #4af2fd;
     text-shadow: 0 0 10px rgba(74, 242, 253, 0.7);
-    margin-bottom: 30px;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
 }
 
+/* Контейнер игры - основные изменения */
 .game-container {
-    max-width: 800px;
+    max-width: 1000px;
     margin: 0 auto;
     background-color: #1a1a2e;
     border-radius: 15px;
     padding: 20px;
     box-shadow: 0 0 20px rgba(74, 242, 253, 0.3);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: 
+        "header header"
+        "clicker upgrades"
+        "stats stats";
+    gap: 20px;
 }
 
 .resource-display {
+    grid-area: header;
     background-color: #0a0a15;
     padding: 15px;
     border-radius: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 0;
 }
 
-.resource-counter {
-    font-size: 2rem;
-    color: #4af2fd;
-    margin-bottom: 5px;
-}
-
-.resource-rate {
-    font-size: 1.2rem;
-    color: #a0a0ff;
-}
-
+/* Область кликера */
 .clicker-area {
+    grid-area: clicker;
     position: relative;
-    margin: 30px auto;
-    width: 200px;
-    height: 200px;
-    cursor: pointer;
-    transition: transform 0.1s;
+    width: 180px;
+    height: 180px;
+    margin: 0 auto;
 }
 
+/* Блок улучшений */
+.upgrades {
+    grid-area: upgrades;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.upgrades::-webkit-scrollbar {
+    width: 6px;
+}
+
+.upgrades::-webkit-scrollbar-thumb {
+    background-color: #4af2fd;
+    border-radius: 3px;
+}
+
+.upgrades h3 {
+    grid-column: 1 / -1;
+    margin: 0 0 10px 0;
+}
+
+.upgrade {
+    background-color: #0a0a15;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #2a2a4a;
+    transition: all 0.3s;
+    margin-bottom: 0;
+}
+
+.upgrade h5 {
+    font-size: 1rem;
+    margin: 0 0 5px 0;
+}
+
+.upgrade p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+}
+
+/* Блок статистики */
+.stats {
+    grid-area: stats;
+    background-color: #0a0a15;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 0;
+}
+
+.stats h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+#statsChart {
+    width: 100% !important;
+    height: 200px !important;
+}
+
+.stats p {
+    margin: 5px 0;
+    display: inline-block;
+    width: 48%;
+}
+#reset-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: #dc3545;
+    border: none;
+    padding: 5px 15px;
+    border-radius: 5px;
+    color: white;
+    font-family: 'Orbitron', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s;
+    z-index: 10;
+}
+
+#reset-btn:hover {
+    background-color: #c82333;
+    transform: scale(1.05);
+}
+
+#reset-btn:active {
+    transform: scale(0.95);
+}
+
+/* Адаптация для мобильных */
+@media (max-width: 768px) {
+    .game-container {
+        grid-template-columns: 1fr;
+        grid-template-areas: 
+            "header"
+            "clicker"
+            "upgrades"
+            "stats";
+        padding: 15px;
+    }
+    
+    .upgrades {
+        grid-template-columns: 1fr;
+        max-height: none;
+    }
+    
+    .clicker-area {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .stats p {
+        width: 100%;
+    }
+}
+
+/* Остальные стили оставить без изменений */
 .clicker-image {
     width: 100%;
     height: 100%;
@@ -74,35 +197,14 @@ body {
     opacity: 1;
 }
 
-.upgrades {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 15px;
-    margin-top: 30px;
-}
-
-.upgrade {
-    background-color: #0a0a15;
-    padding: 15px;
-    border-radius: 10px;
-    border: 1px solid #2a2a4a;
-    transition: all 0.3s;
-}
-
-.upgrade:hover {
-    border-color: #4af2fd;
-    box-shadow: 0 0 10px rgba(74, 242, 253, 0.3);
-}
-
-.upgrade h5 {
-    color: #4af2fd;
-    margin-top: 0;
-}
-
 .buy-btn {
     background-color: #2a2a4a;
     border: none;
     transition: all 0.3s;
+    padding: 5px 10px;
+    font-size: 0.9rem;
+    margin-top: 5px;
+    width: 100%;
 }
 
 .buy-btn:hover {
@@ -115,18 +217,6 @@ body {
     color: #666;
 }
 
-.stats {
-    margin-top: 30px;
-    background-color: #0a0a15;
-    padding: 15px;
-    border-radius: 10px;
-}
-
-.stats h3 {
-    color: #4af2fd;
-    margin-top: 0;
-}
-
 #confetti-canvas {
     position: fixed;
     top: 0;
@@ -136,9 +226,21 @@ body {
     pointer-events: none;
     z-index: 1000;
 }
+#reset-btn {
+    top: 10px;
+    right: 10px;
+    padding: 3px 10px;
+    font-size: 0.8rem;
+}
+}
 
-@media (max-width: 768px) {
-    .upgrades {
-        grid-template-columns: 1fr;
+@keyframes floatUp {
+    0% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-50px);
+        opacity: 0;
     }
 }

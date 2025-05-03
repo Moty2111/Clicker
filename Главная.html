@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Space Clicker</title>
+    <title>Космический Кликер</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="красиво.css">
@@ -11,56 +11,80 @@
     <script src="https://cdn.jsdelivr.net/npm/confetti-js"></script>
 </head>
 <body>
-    <div class="container text-center">
-        <h1 class="game-title">Space Clicker</h1>
-        
+    <div class="container text-center">                
+      <button id="reset-btn" class="btn btn-danger">Сбросить игру</button>   
+        <h1 class="game-title">Космический Кликер</h1>
         <div class="game-container">
             <div class="resource-display">
                 <div class="resource-counter">
-                    <span id="resources">0</span> space credits
+                    <span id="resources">0</span> космических кредитов
                 </div>
                 <div class="resource-rate">
-                    <span id="rate">0</span> credits/second
+                <span id="rate">0</span> кредитов/сек
                 </div>
             </div>
             
             <div class="clicker-area" id="clicker">
-                <img src="https://cdn-icons-png.flaticon.com/512/3618/3618546.png" alt="Click me!" class="clicker-image">
+                <img src="https://cdn-icons-png.flaticon.com/128/8146/8146680.png" alt="Кликай!" class="clicker-image">
                 <div class="click-effect"></div>
             </div>
             
             <div class="upgrades">
-                <h3>Upgrades</h3>
+                <h3>Улучшения</h3>
                 <div class="upgrade" id="auto-clicker">
-                    <h5>Auto-Clicker</h5>
-                    <p>Generates 1 credit per second</p>
-                    <p>Cost: <span class="cost">10</span> credits</p>
-                    <p>Owned: <span class="owned">0</span></p>
-                    <button class="btn btn-primary buy-btn">Buy</button>
+                    <h5>Авто-Кликер</h5>
+                    <p>Генерирует 1 кредит в секунду</p>
+                    <p>Стоимость: <span class="cost">10</span> кредитов</p>
+                    <p>Куплено: <span class="owned">0</span></p>
+                    <button class="btn btn-primary buy-btn">Купить</button>
                 </div>
                 
                 <div class="upgrade" id="mega-clicker">
-                    <h5>Mega-Clicker</h5>
-                    <p>Each click gives 2x credits</p>
-                    <p>Cost: <span class="cost">50</span> credits</p>
-                    <p>Owned: <span class="owned">0</span></p>
-                    <button class="btn btn-primary buy-btn">Buy</button>
+                    <h5>Мега-Кликер</h5>
+                    <p>Каждый клик дает 2x кредитов</p>
+                    <p>Стоимость: <span class="cost">50</span> кредитов</p>
+                    <p>Куплено: <span class="owned">0</span></p>
+                    <button class="btn btn-primary buy-btn">Купить</button>
                 </div>
                 
                 <div class="upgrade" id="space-mine">
-                    <h5>Space Mine</h5>
-                    <p>Generates 5 credits per second</p>
-                    <p>Cost: <span class="cost">200</span> credits</p>
-                    <p>Owned: <span class="owned">0</span></p>
-                    <button class="btn btn-primary buy-btn">Buy</button>
+                    <h5>Космическая Шахта</h5>
+                    <p>Генерирует 5 кредитов в секунду</p>
+                    <p>Стоимость: <span class="cost">200</span> кредитов</p>
+                    <p>Куплено: <span class="owned">0</span></p>
+                    <button class="btn btn-primary buy-btn">Купить</button>
+                </div>
+                
+                <div class="upgrade" id="space-farm">
+                    <h5>Космическая Ферма</h5>
+                    <p>Генерирует 2 кредита в секунду</p>
+                    <p>Стоимость: <span class="cost">150</span> кредитов</p>
+                    <p>Куплено: <span class="owned">0</span></p>
+                    <button class="btn btn-primary buy-btn">Купить</button>
+                </div>
+                
+                <div class="upgrade" id="quantum-accelerator">
+                    <h5>Квантовый Ускоритель</h5>
+                    <p>+20% к доходу всех генераторов</p>
+                    <p>Стоимость: <span class="cost">300</span> кредитов</p>
+                    <p>Куплено: <span class="owned">0</span></p>
+                    <button class="btn btn-primary buy-btn">Купить</button>
+                </div>
+                
+                <div class="upgrade" id="planet-booster">
+                    <h5>Планетарный Бустер</h5>
+                    <p>+10% к эффективности всех улучшений</p>
+                    <p>Стоимость: <span class="cost">500</span> кредитов</p>
+                    <p>Куплено: <span class="owned">0</span></p>
+                    <button class="btn btn-primary buy-btn">Купить</button>
                 </div>
             </div>
             
             <div class="stats">
-                <h3>Statistics</h3>
+                <h3>Статистика</h3>
                 <canvas id="statsChart"></canvas>
-                <p>Total clicks: <span id="totalClicks">0</span></p>
-                <p>Play time: <span id="playTime">0</span> seconds</p>
+                <p>Всего кликов: <span id="totalClicks">0</span></p>
+                <p>Время игры: <span id="playTime">0</span> сек</p>
             </div>
         </div>
     </div>
