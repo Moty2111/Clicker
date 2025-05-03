@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кликер-игра</title>
+    <link rel="stylesheet" href="красиво.css">
+</head>
+<body>
+    <div class="game-container">
+        <h1>Кликер-игра</h1>
+        <p>Очков: <span id="score">0</span></p>
+        <p>Кристаллов: 💎<span id="crystals">0</span></p>
+        <button id="clicker">Кликай!</button>
+        
+        <h2>Улучшения</h2>
+        <div class="upgrades">
+            <button id="upgrade1" class="upgrade-btn">Автоклик (10 очков)</button>
+            <button id="upgrade2" class="upgrade-btn">Улучшение x2 (50 очков)</button>
+        </div>
+        
+        <h2>Супер-улучшения (кристаллы)</h2>
+        <div class="super-upgrades">
+            <button id="superUpgrade1" class="upgrade-btn">Мегаклик (💎5) — +10 за клик</button>
+            <button id="superUpgrade2" class="upgrade-btn">Турбо-автоклик (💎20) — +5/сек</button>
+        </div>
+        
+        <h2>Достижения</h2>
+        <div id="achievements" class="achievements">
+            <div class="achievement" data-id="novice">🔒 Новичок (50 очков)</div>
+            <div class="achievement" data-id="autoclicker">🔒 Автокликер (купить улучшение)</div>
+            <div class="achievement" data-id="boss">🔒 Босс (500 очков)</div>
+            <div class="achievement" data-id="crystalHunter">🔒 Кристальный охотник (10💎)</div>
+        </div>
+    </div>
+    
+    <!-- Звуки -->
+    <audio id="clickSound" src="click.mp3" preload="auto"></audio>
+    <audio id="achievementSound" src="achievement.mp3" preload="auto"></audio>
+    
+    <script src="работа.js"></script>
+</body>
+</html>

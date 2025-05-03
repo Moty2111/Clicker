@@ -1,0 +1,171 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 20px;
+}
+
+.game-container {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    max-width: 500px;
+    margin: 0 auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#clicker {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin: 10px 0;
+    transition: transform 0.1s;
+}
+
+#clicker:hover {
+    background-color: #45a049;
+}
+
+#clicker:active {
+    animation: clickEffect 0.1s;
+}
+
+@keyframes clickEffect {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.9); }
+    100% { transform: scale(1); }
+}
+
+.upgrades, .super-upgrades {
+    margin-top: 20px;
+}
+
+.super-upgrades {
+    border-top: 2px dashed #ccc;
+    padding-top: 15px;
+}
+
+.upgrade-btn {
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    margin: 5px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.upgrade-btn:hover {
+    background-color: #0b7dda;
+}
+
+.upgrade-btn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+#crystals {
+    color: #3a86ff;
+    font-weight: bold;
+}
+
+.achievements {
+    margin-top: 20px;
+}
+
+.achievement {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+    opacity: 0.7;
+    transition: all 0.3s;
+}
+
+.achievement.unlocked {
+    background-color: #e6f7ff;
+    border-color: #91d5ff;
+    opacity: 1;
+}
+
+.achievement.unlocked::before {
+    content: "✅ ";
+}
+
+@keyframes floatUp {
+    0% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-50px); }
+}
+
+/* Мобильная версия (экран меньше 600px) */
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .game-container {
+        padding: 15px;
+        max-width: 100%;
+        border-radius: 8px;
+    }
+
+    h1 {
+        font-size: 24px;
+        margin: 10px 0;
+    }
+
+    h2 {
+        font-size: 18px;
+        margin: 15px 0 10px;
+    }
+
+    /* Кнопки */
+    #clicker {
+        padding: 12px 20px;
+        font-size: 16px;
+        margin: 8px 0;
+    }
+
+    .upgrade-btn {
+        padding: 8px 10px;
+        font-size: 12px;
+        margin: 3px;
+        display: block; /* Каждая кнопка на новой строке */
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Улучшения в 2 колонки */
+    .upgrades, .super-upgrades {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .upgrade-btn {
+        margin: 0;
+    }
+
+    /* Достижения */
+    .achievement {
+        padding: 8px;
+        font-size: 12px;
+    }
+
+    /* Меньшие отступы */
+    p {
+        margin: 5px 0;
+    }
+
+    /* Анимация клика для мобилок */
+    #clicker:active {
+        transform: scale(0.95);
+    }
+}
