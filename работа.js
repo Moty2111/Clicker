@@ -33,20 +33,21 @@ const game = {
         quantumAccelerator: {
             cost: 300,
             owned: 0,
-            multiplier: 0.2, // +20% за каждое улучшение
+            multiplier: 0.2,
             name: "Квантовый Ускоритель"
         },
         planetBooster: {
             cost: 500,
             owned: 0,
-            boost: 0.1, // +10% за каждое улучшение
+            boost: 0.1,
             name: "Планетарный Бустер"
         }
     },
     clickValue: 1,
     resourcesHistory: [],
     timeHistory: [],
-    lastSave: Date.now()
+    lastSave: Date.now(),
+    chartUpdated: false
 };
 
 // DOM элементы
@@ -56,7 +57,11 @@ const elements = {
     clicker: document.getElementById('clicker'),
     totalClicks: document.getElementById('totalClicks'),
     playTime: document.getElementById('playTime'),
-    upgrades: {}
+    upgrades: {},
+    resetBtn: document.getElementById('reset-btn'),
+    resetModal: document.getElementById('reset-modal'),
+    confirmReset: document.getElementById('confirm-reset'),
+    cancelReset: document.getElementById('cancel-reset')
 };
 
 // Инициализация элементов улучшений
@@ -117,30 +122,25 @@ if (typeof Chart !== 'undefined') {
     });
 }
 
-// Основные функции
+// Основные функции игры
 function calculateIncome() {
-    // Базовый доход от генераторов
     const baseIncome = 
         game.upgrades.autoClicker.owned * game.upgrades.autoClicker.value +
         game.upgrades.spaceMine.owned * game.upgrades.spaceMine.value +
         game.upgrades.spaceFarm.owned * game.upgrades.spaceFarm.value;
 
-    // Множители от улучшений
     const quantumMultiplier = 1 + game.upgrades.quantumAccelerator.owned * game.upgrades.quantumAccelerator.multiplier;
     const planetBoost = 1 + game.upgrades.planetBooster.owned * game.upgrades.planetBooster.boost;
 
-    // Итоговый доход в секунду
     game.rate = baseIncome * quantumMultiplier * planetBoost;
 }
 
 function updateUI() {
-    // Обновляем основные показатели
     elements.resources.textContent = Math.floor(game.resources).toLocaleString();
     elements.rate.textContent = game.rate.toFixed(1);
     elements.totalClicks.textContent = game.totalClicks.toLocaleString();
     elements.playTime.textContent = game.playTime.toFixed(1);
 
-    // Обновляем информацию об улучшениях
     Object.keys(game.upgrades).forEach(upgradeId => {
         const upgrade = game.upgrades[upgradeId];
         const element = elements.upgrades[upgradeId];
@@ -168,18 +168,14 @@ function buyUpgrade(upgradeId) {
         upgrade.owned++;
         upgrade.cost = Math.floor(upgrade.cost * 1.15);
         
-        // Особые эффекты улучшений
         if (upgradeId === 'megaClicker') {
             game.clickValue = 1 + game.upgrades.megaClicker.owned;
         }
         
-        // Пересчитываем доход
         calculateIncome();
         
-        // Эффект при покупке
         showFloatingText(`${upgrade.name} улучшено!`, '#4af2fd');
         
-        // Конфетти каждые 5 уровней
         if (upgrade.owned % 5 === 0 && confetti) {
             confetti.render();
             setTimeout(() => {
@@ -193,16 +189,13 @@ function buyUpgrade(upgradeId) {
 }
 
 function handleClick(event) {
-    // Только левая кнопка мыши
     if (event && event.button !== 0) return;
     
-    // Анимация клика
     elements.clicker.classList.add('clicked');
     setTimeout(() => {
         elements.clicker.classList.remove('clicked');
     }, 300);
     
-    // Критический удар (5% шанс)
     const isCritical = Math.random() < 0.05;
     const baseValue = game.clickValue;
     const finalValue = isCritical ? baseValue * 5 : baseValue;
@@ -217,7 +210,6 @@ function handleClick(event) {
     
     updateUI();
     
-    // Автосохранение не чаще чем раз в 5 секунд
     if (Date.now() - game.lastSave > 5000) {
         saveGame();
         game.lastSave = Date.now();
@@ -251,6 +243,51 @@ function showFloatingText(text, color) {
     }, 1000);
 }
 
+// Функции сброса игры
+function showResetModal() {
+    elements.resetModal.classList.add('active');
+}
+
+function hideResetModal() {
+    elements.resetModal.classList.remove('active');
+}
+
+function resetGame() {
+    // Сброс значений
+    game.resources = 0;
+    game.rate = 0;
+    game.totalClicks = 0;
+    game.playTime = 0;
+    game.clickValue = 1;
+    game.resourcesHistory = [];
+    game.timeHistory = [];
+    
+    // Сброс улучшений
+    Object.keys(game.upgrades).forEach(upgradeId => {
+        const upgrade = game.upgrades[upgradeId];
+        upgrade.owned = 0;
+        if (upgradeId === 'autoClicker') upgrade.cost = 10;
+        else if (upgradeId === 'megaClicker') upgrade.cost = 50;
+        else if (upgradeId === 'spaceMine') upgrade.cost = 200;
+        else if (upgradeId === 'spaceFarm') upgrade.cost = 150;
+        else if (upgradeId === 'quantumAccelerator') upgrade.cost = 300;
+        else if (upgradeId === 'planetBooster') upgrade.cost = 500;
+    });
+    
+    calculateIncome();
+    updateUI();
+    
+    if (chart) {
+        chart.data.labels = [];
+        chart.data.datasets[0].data = [];
+        chart.update();
+    }
+    
+    localStorage.removeItem('spaceClickerSave');
+    showFloatingText("Игра сброшена!", "#ff5555");
+    hideResetModal();
+}
+
 // Сохранение/загрузка
 function saveGame() {
     localStorage.setItem('spaceClickerSave', JSON.stringify({
@@ -272,14 +309,12 @@ function loadGame() {
         try {
             const parsed = JSON.parse(savedGame);
             
-            // Основные данные
             game.resources = parsed.resources || 0;
             game.rate = parsed.rate || 0;
             game.totalClicks = parsed.totalClicks || 0;
             game.playTime = parsed.playTime || 0;
             game.clickValue = parsed.clickValue || 1;
             
-            // Улучшения
             Object.keys(game.upgrades).forEach(upgradeId => {
                 if (parsed.upgrades && parsed.upgrades[upgradeId]) {
                     game.upgrades[upgradeId].owned = parsed.upgrades[upgradeId].owned || 0;
@@ -287,7 +322,6 @@ function loadGame() {
                 }
             });
             
-            // График
             game.resourcesHistory = parsed.resourcesHistory || [];
             game.timeHistory = parsed.timeHistory || [];
             
@@ -297,10 +331,9 @@ function loadGame() {
                 chart.update();
             }
             
-            // Восстановление оффлайн-прогресса
             if (parsed.lastUpdate) {
-                const offlineTime = (Date.now() - parsed.lastUpdate) / 1000; // в секундах
-                if (offlineTime > 5) { // Минимум 5 секунд
+                const offlineTime = (Date.now() - parsed.lastUpdate) / 1000;
+                if (offlineTime > 5) {
                     game.resources += game.rate * offlineTime;
                     game.playTime += offlineTime;
                 }
@@ -314,16 +347,14 @@ function loadGame() {
 }
 
 // Игровой цикл
-function gameLoop() {
+function gameLoop(timestamp) {
     const now = Date.now();
-    const deltaTime = (now - game.lastUpdate) / 1000; // В секундах
+    const deltaTime = (now - game.lastUpdate) / 1000;
     game.lastUpdate = now;
     
-    // Добавляем ресурсы пропорционально прошедшему времени
     game.resources += game.rate * deltaTime;
     game.playTime += deltaTime;
     
-    // Обновление графика каждые 5 секунд
     if (Math.floor(game.playTime) % 5 === 0 && !game.chartUpdated) {
         game.resourcesHistory.push(Math.floor(game.resources));
         game.timeHistory.push(Math.floor(game.playTime));
@@ -348,25 +379,11 @@ function gameLoop() {
     requestAnimationFrame(gameLoop);
 }
 
-// Инициализация
-function init() {
-    loadGame();
-    calculateIncome();
-    updateUI();
-    setupEventListeners();
-    
-    // Запуск игрового цикла
-    game.lastUpdate = Date.now();
-    game.chartUpdated = false;
-    requestAnimationFrame(gameLoop);
-}
-
+// Настройка обработчиков событий
 function setupEventListeners() {
-    // Клик мышкой
     elements.clicker.addEventListener('click', handleClick);
     elements.clicker.addEventListener('mousedown', (e) => e.preventDefault());
     
-    // Клик пробелом
     document.addEventListener('keydown', (e) => {
         if (e.code === 'Space') {
             e.preventDefault();
@@ -374,7 +391,6 @@ function setupEventListeners() {
         }
     });
     
-    // Кнопки улучшений
     Object.keys(game.upgrades).forEach(upgradeId => {
         const element = elements.upgrades[upgradeId];
         if (element) {
@@ -384,55 +400,30 @@ function setupEventListeners() {
             }
         }
     });
-    // Функция сброса игры
-function resetGame() {
-    if (confirm("Вы точно хотите сбросить весь прогресс? Это действие нельзя отменить!")) {
-        // Сброс значений
-        game.resources = 0;
-        game.rate = 0;
-        game.totalClicks = 0;
-        game.playTime = 0;
-        game.clickValue = 1;
-        game.resourcesHistory = [];
-        game.timeHistory = [];
-        
-        // Сброс улучшений
-        Object.keys(game.upgrades).forEach(upgradeId => {
-            const upgrade = game.upgrades[upgradeId];
-            upgrade.owned = 0;
-            // Восстановление базовой стоимости
-            if (upgradeId === 'autoClicker') upgrade.cost = 10;
-            else if (upgradeId === 'megaClicker') upgrade.cost = 50;
-            else if (upgradeId === 'spaceMine') upgrade.cost = 200;
-            else if (upgradeId === 'spaceFarm') upgrade.cost = 150;
-            else if (upgradeId === 'quantumAccelerator') upgrade.cost = 300;
-            else if (upgradeId === 'planetBooster') upgrade.cost = 500;
-        });
-        
-        // Обновление интерфейса
-        calculateIncome();
-        updateUI();
-        
-        // Сброс графика
-        if (chart) {
-            chart.data.labels = [];
-            chart.data.datasets[0].data = [];
-            chart.update();
+    
+    elements.resetBtn.addEventListener('click', showResetModal);
+    elements.confirmReset.addEventListener('click', resetGame);
+    elements.cancelReset.addEventListener('click', hideResetModal);
+    
+    elements.resetModal.addEventListener('click', function(e) {
+        if (e.target === this) {
+            hideResetModal();
         }
-        
-        // Удаление сохранения
-        localStorage.removeItem('spaceClickerSave');
-        
-        // Визуальный эффект
-        showFloatingText("Игра сброшена!", "#ff5555");
-    }
+    });
+    
+    window.addEventListener('beforeunload', saveGame);
 }
 
-// В setupEventListeners добавить:
-document.getElementById('reset-btn').addEventListener('click', resetGame);
+// Инициализация игры
+function init() {
+    loadGame();
+    calculateIncome();
+    updateUI();
+    setupEventListeners();
     
-    // Сохранение при закрытии
-    window.addEventListener('beforeunload', saveGame);
+    game.lastUpdate = Date.now();
+    game.chartUpdated = false;
+    requestAnimationFrame(gameLoop);
 }
 
 // Запуск игры
