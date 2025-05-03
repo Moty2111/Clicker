@@ -1,171 +1,144 @@
 body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    background-color: #f0f0f0;
-    margin: 0;
+    background-color: #0f0f1a;
+    color: #e0e0ff;
+    font-family: 'Orbitron', sans-serif;
     padding: 20px;
+}
+
+.game-title {
+    color: #4af2fd;
+    text-shadow: 0 0 10px rgba(74, 242, 253, 0.7);
+    margin-bottom: 30px;
 }
 
 .game-container {
-    background-color: white;
-    border-radius: 10px;
-    padding: 20px;
-    max-width: 500px;
+    max-width: 800px;
     margin: 0 auto;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #1a1a2e;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(74, 242, 253, 0.3);
 }
 
-#clicker {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 15px 30px;
-    font-size: 18px;
+.resource-display {
+    background-color: #0a0a15;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.resource-counter {
+    font-size: 2rem;
+    color: #4af2fd;
+    margin-bottom: 5px;
+}
+
+.resource-rate {
+    font-size: 1.2rem;
+    color: #a0a0ff;
+}
+
+.clicker-area {
+    position: relative;
+    margin: 30px auto;
+    width: 200px;
+    height: 200px;
     cursor: pointer;
-    border-radius: 5px;
-    margin: 10px 0;
     transition: transform 0.1s;
 }
 
-#clicker:hover {
-    background-color: #45a049;
+.clicker-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 10px rgba(74, 242, 253, 0.7));
 }
 
-#clicker:active {
-    animation: clickEffect 0.1s;
+.clicker-area:active {
+    transform: scale(0.95);
 }
 
-@keyframes clickEffect {
-    0% { transform: scale(1); }
-    50% { transform: scale(0.9); }
-    100% { transform: scale(1); }
+.click-effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(74, 242, 253, 0.4) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s;
 }
 
-.upgrades, .super-upgrades {
-    margin-top: 20px;
-}
-
-.super-upgrades {
-    border-top: 2px dashed #ccc;
-    padding-top: 15px;
-}
-
-.upgrade-btn {
-    background-color: #2196F3;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    margin: 5px;
-    cursor: pointer;
-    border-radius: 5px;
-}
-
-.upgrade-btn:hover {
-    background-color: #0b7dda;
-}
-
-.upgrade-btn:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-}
-
-#crystals {
-    color: #3a86ff;
-    font-weight: bold;
-}
-
-.achievements {
-    margin-top: 20px;
-}
-
-.achievement {
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    padding: 10px;
-    margin: 5px 0;
-    border-radius: 5px;
-    opacity: 0.7;
-    transition: all 0.3s;
-}
-
-.achievement.unlocked {
-    background-color: #e6f7ff;
-    border-color: #91d5ff;
+.clicker-area.clicked .click-effect {
     opacity: 1;
 }
 
-.achievement.unlocked::before {
-    content: "✅ ";
+.upgrades {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin-top: 30px;
 }
 
-@keyframes floatUp {
-    0% { opacity: 1; transform: translateY(0); }
-    100% { opacity: 0; transform: translateY(-50px); }
+.upgrade {
+    background-color: #0a0a15;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #2a2a4a;
+    transition: all 0.3s;
 }
 
-/* Мобильная версия (экран меньше 600px) */
-@media (max-width: 600px) {
-    body {
-        padding: 10px;
-        font-size: 14px;
-    }
+.upgrade:hover {
+    border-color: #4af2fd;
+    box-shadow: 0 0 10px rgba(74, 242, 253, 0.3);
+}
 
-    .game-container {
-        padding: 15px;
-        max-width: 100%;
-        border-radius: 8px;
-    }
+.upgrade h5 {
+    color: #4af2fd;
+    margin-top: 0;
+}
 
-    h1 {
-        font-size: 24px;
-        margin: 10px 0;
-    }
+.buy-btn {
+    background-color: #2a2a4a;
+    border: none;
+    transition: all 0.3s;
+}
 
-    h2 {
-        font-size: 18px;
-        margin: 15px 0 10px;
-    }
+.buy-btn:hover {
+    background-color: #4af2fd;
+    color: #0a0a15;
+}
 
-    /* Кнопки */
-    #clicker {
-        padding: 12px 20px;
-        font-size: 16px;
-        margin: 8px 0;
-    }
+.buy-btn:disabled {
+    background-color: #1a1a2e;
+    color: #666;
+}
 
-    .upgrade-btn {
-        padding: 8px 10px;
-        font-size: 12px;
-        margin: 3px;
-        display: block; /* Каждая кнопка на новой строке */
-        width: 100%;
-        box-sizing: border-box;
-    }
+.stats {
+    margin-top: 30px;
+    background-color: #0a0a15;
+    padding: 15px;
+    border-radius: 10px;
+}
 
-    /* Улучшения в 2 колонки */
-    .upgrades, .super-upgrades {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-    }
+.stats h3 {
+    color: #4af2fd;
+    margin-top: 0;
+}
 
-    .upgrade-btn {
-        margin: 0;
-    }
+#confetti-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1000;
+}
 
-    /* Достижения */
-    .achievement {
-        padding: 8px;
-        font-size: 12px;
-    }
-
-    /* Меньшие отступы */
-    p {
-        margin: 5px 0;
-    }
-
-    /* Анимация клика для мобилок */
-    #clicker:active {
-        transform: scale(0.95);
+@media (max-width: 768px) {
+    .upgrades {
+        grid-template-columns: 1fr;
     }
 }
