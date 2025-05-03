@@ -1,42 +1,71 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Кликер-игра</title>
+    <title>Space Clicker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="красиво.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/confetti-js"></script>
 </head>
 <body>
-    <div class="game-container">
-        <h1>Кликер-игра</h1>
-        <p>Очков: <span id="score">0</span></p>
-        <p>Кристаллов: 💎<span id="crystals">0</span></p>
-        <button id="clicker">Кликай!</button>
+    <div class="container text-center">
+        <h1 class="game-title">Space Clicker</h1>
         
-        <h2>Улучшения</h2>
-        <div class="upgrades">
-            <button id="upgrade1" class="upgrade-btn">Автоклик (10 очков)</button>
-            <button id="upgrade2" class="upgrade-btn">Улучшение x2 (50 очков)</button>
-        </div>
-        
-        <h2>Супер-улучшения (кристаллы)</h2>
-        <div class="super-upgrades">
-            <button id="superUpgrade1" class="upgrade-btn">Мегаклик (💎5) — +10 за клик</button>
-            <button id="superUpgrade2" class="upgrade-btn">Турбо-автоклик (💎20) — +5/сек</button>
-        </div>
-        
-        <h2>Достижения</h2>
-        <div id="achievements" class="achievements">
-            <div class="achievement" data-id="novice">🔒 Новичок (50 очков)</div>
-            <div class="achievement" data-id="autoclicker">🔒 Автокликер (купить улучшение)</div>
-            <div class="achievement" data-id="boss">🔒 Босс (500 очков)</div>
-            <div class="achievement" data-id="crystalHunter">🔒 Кристальный охотник (10💎)</div>
+        <div class="game-container">
+            <div class="resource-display">
+                <div class="resource-counter">
+                    <span id="resources">0</span> space credits
+                </div>
+                <div class="resource-rate">
+                    <span id="rate">0</span> credits/second
+                </div>
+            </div>
+            
+            <div class="clicker-area" id="clicker">
+                <img src="https://cdn-icons-png.flaticon.com/512/3618/3618546.png" alt="Click me!" class="clicker-image">
+                <div class="click-effect"></div>
+            </div>
+            
+            <div class="upgrades">
+                <h3>Upgrades</h3>
+                <div class="upgrade" id="auto-clicker">
+                    <h5>Auto-Clicker</h5>
+                    <p>Generates 1 credit per second</p>
+                    <p>Cost: <span class="cost">10</span> credits</p>
+                    <p>Owned: <span class="owned">0</span></p>
+                    <button class="btn btn-primary buy-btn">Buy</button>
+                </div>
+                
+                <div class="upgrade" id="mega-clicker">
+                    <h5>Mega-Clicker</h5>
+                    <p>Each click gives 2x credits</p>
+                    <p>Cost: <span class="cost">50</span> credits</p>
+                    <p>Owned: <span class="owned">0</span></p>
+                    <button class="btn btn-primary buy-btn">Buy</button>
+                </div>
+                
+                <div class="upgrade" id="space-mine">
+                    <h5>Space Mine</h5>
+                    <p>Generates 5 credits per second</p>
+                    <p>Cost: <span class="cost">200</span> credits</p>
+                    <p>Owned: <span class="owned">0</span></p>
+                    <button class="btn btn-primary buy-btn">Buy</button>
+                </div>
+            </div>
+            
+            <div class="stats">
+                <h3>Statistics</h3>
+                <canvas id="statsChart"></canvas>
+                <p>Total clicks: <span id="totalClicks">0</span></p>
+                <p>Play time: <span id="playTime">0</span> seconds</p>
+            </div>
         </div>
     </div>
     
-    <!-- Звуки -->
-    <audio id="clickSound" src="click.mp3" preload="auto"></audio>
-    <audio id="achievementSound" src="achievement.mp3" preload="auto"></audio>
+    <canvas id="confetti-canvas"></canvas>
     
     <script src="работа.js"></script>
 </body>
