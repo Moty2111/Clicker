@@ -47,7 +47,14 @@ const game = {
     resourcesHistory: [],
     timeHistory: [],
     lastSave: Date.now(),
-    chartUpdated: false
+    chartUpdated: false,
+    totalUpgradesBought: 0,
+    achievements: {
+        novice: { unlocked: false, name: "Новичок", description: "Собери 100 кредитов", reward: 50, bonus: 0 },
+        investor: { unlocked: false, name: "Инвестор", description: "Купи 5 улучшений", reward: 100, bonus: 0.05 },
+        clickMaster: { unlocked: false, name: "Кликер-мастер", description: "Сделай 1000 кликов", reward: 200, bonus: 0 },
+        spaceTycoon: { unlocked: false, name: "Космический магнат", description: "Достигни 10,000 кредитов", reward: 500, bonus: 0.1 }
+    }
 };
 
 // DOM элементы
@@ -57,11 +64,17 @@ const elements = {
     clicker: document.getElementById('clicker'),
     totalClicks: document.getElementById('totalClicks'),
     playTime: document.getElementById('playTime'),
+    totalUpgrades: document.getElementById('totalUpgrades'),
     upgrades: {},
     resetBtn: document.getElementById('reset-btn'),
     resetModal: document.getElementById('reset-modal'),
     confirmReset: document.getElementById('confirm-reset'),
-    cancelReset: document.getElementById('cancel-reset')
+    cancelReset: document.getElementById('cancel-reset'),
+    achievementModal: document.getElementById('achievement-modal'),
+    achievementTitle: document.querySelector('.achievement-title'),
+    achievementDesc: document.querySelector('.achievement-desc'),
+    achievementReward: document.querySelector('.achievement-reward'),
+    achievementCloseBtn: document.querySelector('.achievement-close-btn')
 };
 
 // Инициализация элементов улучшений
@@ -140,6 +153,7 @@ function updateUI() {
     elements.rate.textContent = game.rate.toFixed(1);
     elements.totalClicks.textContent = game.totalClicks.toLocaleString();
     elements.playTime.textContent = game.playTime.toFixed(1);
+    elements.totalUpgrades.textContent = game.totalUpgradesBought;
 
     Object.keys(game.upgrades).forEach(upgradeId => {
         const upgrade = game.upgrades[upgradeId];
@@ -158,6 +172,8 @@ function updateUI() {
             }
         }
     });
+    
+    checkAchievements();
 }
 
 function buyUpgrade(upgradeId) {
@@ -167,6 +183,7 @@ function buyUpgrade(upgradeId) {
         game.resources -= upgrade.cost;
         upgrade.owned++;
         upgrade.cost = Math.floor(upgrade.cost * 1.15);
+        game.totalUpgradesBought++;
         
         if (upgradeId === 'megaClicker') {
             game.clickValue = 1 + game.upgrades.megaClicker.owned;
@@ -243,7 +260,64 @@ function showFloatingText(text, color) {
     }, 1000);
 }
 
-// Функции сброса игры
+// Система достижений
+function checkAchievements() {
+    // Новичок - 100 кредитов
+    if (!game.achievements.novice.unlocked && game.resources >= 100) {
+        unlockAchievement('novice');
+    }
+    
+    // Инвестор - 5 улучшений
+    if (!game.achievements.investor.unlocked && game.totalUpgradesBought >= 5) {
+        unlockAchievement('investor');
+    }
+    
+    // Кликер-мастер - 1000 кликов
+    if (!game.achievements.clickMaster.unlocked && game.totalClicks >= 1000) {
+        unlockAchievement('clickMaster');
+    }
+    
+    // Космический магнат - 10,000 кредитов
+    if (!game.achievements.spaceTycoon.unlocked && game.resources >= 10000) {
+        unlockAchievement('spaceTycoon');
+    }
+}
+
+function unlockAchievement(achievementId) {
+    const achievement = game.achievements[achievementId];
+    achievement.unlocked = true;
+    
+    // Выдаем награду
+    game.resources += achievement.reward;
+    
+    // Применяем бонус если есть
+    if (achievement.bonus > 0) {
+        game.rate *= (1 + achievement.bonus);
+    }
+    
+    // Показываем уведомление
+    showAchievementModal(achievement);
+    
+    // Обновляем UI
+    updateUI();
+    saveGame();
+}
+
+function showAchievementModal(achievement) {
+    elements.achievementTitle.textContent = achievement.name;
+    elements.achievementDesc.textContent = achievement.description;
+    elements.achievementReward.textContent = 
+        `Награда: ${achievement.reward} кредитов${achievement.bonus > 0 ? ` + ${achievement.bonus*100}% к доходу` : ''}`;
+    
+    elements.achievementModal.style.display = 'flex';
+    
+    // Автоматическое закрытие через 5 секунд
+    setTimeout(() => {
+        elements.achievementModal.style.display = 'none';
+    }, 5000);
+}
+
+// Система сброса игры
 function showResetModal() {
     elements.resetModal.classList.add('active');
 }
@@ -261,6 +335,7 @@ function resetGame() {
     game.clickValue = 1;
     game.resourcesHistory = [];
     game.timeHistory = [];
+    game.totalUpgradesBought = 0;
     
     // Сброс улучшений
     Object.keys(game.upgrades).forEach(upgradeId => {
@@ -272,6 +347,11 @@ function resetGame() {
         else if (upgradeId === 'spaceFarm') upgrade.cost = 150;
         else if (upgradeId === 'quantumAccelerator') upgrade.cost = 300;
         else if (upgradeId === 'planetBooster') upgrade.cost = 500;
+    });
+    
+    // Сброс достижений
+    Object.keys(game.achievements).forEach(achievementId => {
+        game.achievements[achievementId].unlocked = false;
     });
     
     calculateIncome();
@@ -299,7 +379,9 @@ function saveGame() {
         clickValue: game.clickValue,
         resourcesHistory: game.resourcesHistory.slice(-20),
         timeHistory: game.timeHistory.slice(-20),
-        lastUpdate: Date.now()
+        lastUpdate: Date.now(),
+        totalUpgradesBought: game.totalUpgradesBought,
+        achievements: game.achievements
     }));
 }
 
@@ -314,6 +396,7 @@ function loadGame() {
             game.totalClicks = parsed.totalClicks || 0;
             game.playTime = parsed.playTime || 0;
             game.clickValue = parsed.clickValue || 1;
+            game.totalUpgradesBought = parsed.totalUpgradesBought || 0;
             
             Object.keys(game.upgrades).forEach(upgradeId => {
                 if (parsed.upgrades && parsed.upgrades[upgradeId]) {
@@ -321,6 +404,14 @@ function loadGame() {
                     game.upgrades[upgradeId].cost = parsed.upgrades[upgradeId].cost || game.upgrades[upgradeId].cost;
                 }
             });
+            
+            if (parsed.achievements) {
+                Object.keys(game.achievements).forEach(achievementId => {
+                    if (parsed.achievements[achievementId]) {
+                        game.achievements[achievementId].unlocked = parsed.achievements[achievementId].unlocked || false;
+                    }
+                });
+            }
             
             game.resourcesHistory = parsed.resourcesHistory || [];
             game.timeHistory = parsed.timeHistory || [];
@@ -409,6 +500,10 @@ function setupEventListeners() {
         if (e.target === this) {
             hideResetModal();
         }
+    });
+    
+    elements.achievementCloseBtn.addEventListener('click', () => {
+        elements.achievementModal.style.display = 'none';
     });
     
     window.addEventListener('beforeunload', saveGame);

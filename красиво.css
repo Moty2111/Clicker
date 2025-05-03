@@ -1,4 +1,3 @@
-/* Основные стили (оставить без изменений) */
 body {
     background-color: #0f0f1a;
     color: #e0e0ff;
@@ -14,9 +13,9 @@ body {
     text-shadow: 0 0 10px rgba(74, 242, 253, 0.7);
     margin-bottom: 20px;
     font-size: 1.8rem;
+    position: relative;
 }
 
-/* Контейнер игры - основные изменения */
 .game-container {
     max-width: 1000px;
     margin: 0 auto;
@@ -41,16 +40,62 @@ body {
     margin-bottom: 0;
 }
 
-/* Область кликера */
+.resource-counter {
+    font-size: 2rem;
+    color: #4af2fd;
+    margin-bottom: 5px;
+}
+
+.resource-rate {
+    font-size: 1.2rem;
+    color: #a0a0ff;
+}
+
 .clicker-area {
     grid-area: clicker;
     position: relative;
     width: 180px;
     height: 180px;
     margin: 0 auto;
+    cursor: pointer;
+    transition: all 0.3s;
 }
 
-/* Блок улучшений */
+.clicker-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 10px rgba(74, 242, 253, 0.7));
+    transition: all 0.3s;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+.clicker-area:hover .clicker-image {
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 20px rgba(74, 242, 253, 0.9));
+}
+
+.clicker-area:active .clicker-image {
+    transform: scale(0.95);
+}
+
+.click-effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(74, 242, 253, 0.4) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.clicker-area.clicked .click-effect {
+    opacity: 1;
+}
+
 .upgrades {
     grid-area: upgrades;
     display: grid;
@@ -70,23 +115,23 @@ body {
     border-radius: 3px;
 }
 
-.upgrades h3 {
-    grid-column: 1 / -1;
-    margin: 0 0 10px 0;
-}
-
 .upgrade {
     background-color: #0a0a15;
     padding: 12px;
     border-radius: 8px;
     border: 1px solid #2a2a4a;
     transition: all 0.3s;
-    margin-bottom: 0;
+}
+
+.upgrade:hover {
+    border-color: #4af2fd;
+    box-shadow: 0 0 10px rgba(74, 242, 253, 0.3);
 }
 
 .upgrade h5 {
+    color: #4af2fd;
+    margin-top: 0;
     font-size: 1rem;
-    margin: 0 0 5px 0;
 }
 
 .upgrade p {
@@ -94,7 +139,27 @@ body {
     font-size: 0.9rem;
 }
 
-/* Блок статистики */
+.buy-btn {
+    background-color: #2a2a4a;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: #e0e0ff;
+    transition: all 0.3s;
+    width: 100%;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.buy-btn:hover {
+    background-color: #4af2fd;
+    color: #0a0a15;
+}
+
+.buy-btn:disabled {
+    background-color: #1a1a2e;
+    color: #666;
+}
+
 .stats {
     grid-area: stats;
     background-color: #0a0a15;
@@ -104,43 +169,33 @@ body {
 }
 
 .stats h3 {
+    color: #4af2fd;
     margin-top: 0;
     margin-bottom: 10px;
 }
 
 #statsChart {
     width: 100% !important;
-    height: 200px !important;
+    height: 300px !important;
 }
 
 .stats p {
-    margin: 5px 0;
+    margin: 10px 0;
     display: inline-block;
-    width: 48%;
-}
-#reset-btn {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background-color: #dc3545;
-    border: none;
-    padding: 5px 15px;
-    border-radius: 10px;
-    color: white;
-    font-family: 'Orbitron', sans-serif;
-    cursor: pointer;
-    transition: all 0.3s;
-    z-index: 10;
+    width: 40%;
 }
 
-#reset-btn:hover {
-    background-color: #c82333;
-    transform: scale(1.05);
+#confetti-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1000;
 }
 
-#reset-btn:active {
-    transform: scale(0.95);
-}
+/* Модальное окно сброса */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -228,9 +283,104 @@ body {
     transform: translateY(-2px);
 }
 
-/* Анимация при нажатии */
 .modal-btn:active {
     transform: translateY(1px) !important;
+}
+
+/* Окно достижений */
+.achievement-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.achievement-content {
+    background: linear-gradient(135deg, #1a1a2e 0%, #0a0a15 100%);
+    border: 2px solid #4af2fd;
+    border-radius: 15px;
+    padding: 20px;
+    max-width: 350px;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(74, 242, 253, 0.5);
+    animation: achievementPop 0.5s ease-out;
+}
+
+@keyframes achievementPop {
+    0% { transform: scale(0.5); opacity: 0; }
+    80% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.achievement-title {
+    color: #4af2fd;
+    font-size: 1.5rem;
+    margin: 10px 0;
+    text-shadow: 0 0 10px rgba(74, 242, 253, 0.7);
+}
+
+.achievement-desc {
+    color: #e0e0ff;
+    margin: 10px 0;
+}
+
+.achievement-reward {
+    color: #f8f800;
+    font-weight: bold;
+    margin: 15px 0;
+}
+
+.achievement-close-btn {
+    background-color: #2a2a4a;
+    color: #e0e0ff;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.achievement-close-btn:hover {
+    background-color: #4af2fd;
+    color: #0a0a15;
+}
+
+/* Кнопка сброса */
+#reset-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: #dc3545;
+    border: none;
+    padding: 5px 15px;
+    border-radius: 5px;
+    color: white;
+    font-family: 'Orbitron', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s;
+    z-index: 10;
+}
+
+#reset-btn:hover {
+    background-color: #c82333;
+    transform: scale(1.05);
+}
+
+#reset-btn:active {
+    transform: scale(0.95);
+}
+
+/* Анимация всплывающего текста */
+@keyframes floatUp {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-50px); opacity: 0; }
 }
 
 /* Адаптация для мобильных */
@@ -258,80 +408,11 @@ body {
     .stats p {
         width: 100%;
     }
-}
-
-/* Остальные стили оставить без изменений */
-.clicker-image {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    filter: drop-shadow(0 0 10px rgba(74, 242, 253, 0.7));
-}
-
-.clicker-area:active {
-    transform: scale(0.95);
-}
-
-.click-effect {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(74, 242, 253, 0.4) 0%, transparent 70%);
-    opacity: 0;
-    transition: opacity 0.3s;
-}
-
-.clicker-area.clicked .click-effect {
-    opacity: 1;
-}
-
-.buy-btn {
-    background-color: #2a2a4a;
-    border: none;
-    transition: all 0.3s;
-    padding: 5px 10px;
-    font-size: 0.9rem;
-    margin-top: 5px;
-    width: 100%;
-}
-
-.buy-btn:hover {
-    background-color: #4af2fd;
-    color: #0a0a15;
-}
-
-.buy-btn:disabled {
-    background-color: #1a1a2e;
-    color: #666;
-}
-
-#confetti-canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 1000;
-}
-#reset-btn {
-    top: 10px;
-    right: 10px;
-    padding: 3px 10px;
-    font-size: 0.8rem;
-}
-}
-
-@keyframes floatUp {
-    0% {
-        transform: translateY(0);
-        opacity: 1;
-    }
-    100% {
-        transform: translateY(-50px);
-        opacity: 0;
+    
+    #reset-btn {
+        top: 10px;
+        right: 10px;
+        padding: 3px 10px;
+        font-size: 0.8rem;
     }
 }

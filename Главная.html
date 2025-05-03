@@ -11,16 +11,17 @@
     <script src="https://cdn.jsdelivr.net/npm/confetti-js"></script>
 </head>
 <body>
-    <div class="container text-center">                
-      <button id="reset-btn" class="btn btn-danger">Сбросить игру</button>   
+    <div class="container text-center">
         <h1 class="game-title">Космический Кликер</h1>
+        <button id="reset-btn" class="btn btn-danger">Сбросить игру</button>
+        
         <div class="game-container">
             <div class="resource-display">
                 <div class="resource-counter">
                     <span id="resources">0</span> космических кредитов
                 </div>
                 <div class="resource-rate">
-                <span id="rate">0</span> кредитов/сек
+                    <span id="rate">0</span> кредитов/сек
                 </div>
             </div>
             
@@ -85,12 +86,13 @@
                 <canvas id="statsChart"></canvas>
                 <p>Всего кликов: <span id="totalClicks">0</span></p>
                 <p>Время игры: <span id="playTime">0</span> сек</p>
+                <p>Куплено улучшений: <span id="totalUpgrades">0</span></p>
             </div>
         </div>
     </div>
     
-    <canvas id="confetti-canvas"></canvas>
-     <div id="reset-modal" class="modal-overlay">
+    <!-- Модальное окно сброса -->
+    <div id="reset-modal" class="modal-overlay">
         <div class="modal-content">
             <h3>Подтверждение сброса</h3>
             <p>Вы уверены, что хотите полностью сбросить прогресс игры? Это действие нельзя отменить!</p>
@@ -99,8 +101,21 @@
                 <button id="cancel-reset" class="modal-btn cancel-btn">Отмена</button>
             </div>
         </div>
-    <script src="работа.js"></script>
-   
     </div>
+    
+    <!-- Окно достижений -->
+    <div id="achievement-modal" class="achievement-modal">
+        <div class="achievement-content">
+            <h3>Достижение разблокировано!</h3>
+            <h4 class="achievement-title"></h4>
+            <p class="achievement-desc"></p>
+            <p class="achievement-reward"></p>
+            <button class="achievement-close-btn">OK</button>
+        </div>
+    </div>
+    
+    <canvas id="confetti-canvas"></canvas>
+    
+    <script src="работа.js"></script>
 </body>
 </html>
