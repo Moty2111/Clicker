@@ -3,40 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Кликер-игра</title>
+    <title>Космический Кликер</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="красиво.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/confetti-js"></script>
 </head>
 <body>
-    <div class="game-container">
-        <h1>Кликер-игра</h1>
-        <p>Очков: <span id="score">0</span></p>
-        <p>Кристаллов: 💎<span id="crystals">0</span></p>
-        <button id="clicker">Кликай!</button>
+    <div class="container text-center">
+        <h1 class="game-title">Космический Кликер</h1>
+        <button id="reset-btn" class="btn btn-danger">Сбросить игру</button>
         
-        <h2>Улучшения</h2>
-        <div class="upgrades">
-            <button id="upgrade1" class="upgrade-btn">Автоклик (10 очков)</button>
-            <button id="upgrade2" class="upgrade-btn">Улучшение x2 (50 очков)</button>
-        </div>
-        
-        <h2>Супер-улучшения (кристаллы)</h2>
-        <div class="super-upgrades">
-            <button id="superUpgrade1" class="upgrade-btn">Мегаклик (💎5) — +10 за клик</button>
-            <button id="superUpgrade2" class="upgrade-btn">Турбо-автоклик (💎20) — +5/сек</button>
-        </div>
-        
-        <h2>Достижения</h2>
-        <div id="achievements" class="achievements">
-            <div class="achievement" data-id="novice">🔒 Новичок (50 очков)</div>
-            <div class="achievement" data-id="autoclicker">🔒 Автокликер (купить улучшение)</div>
-            <div class="achievement" data-id="boss">🔒 Босс (500 очков)</div>
-            <div class="achievement" data-id="crystalHunter">🔒 Кристальный охотник (10💎)</div>
+        <div class="game-container">
+            <div class="resource-display">
+                <div class="resource-counter">
+                    <span id="resources">0</span> космических кредитов
+                </div>
+                <div class="resource-rate">
+                    <span id="rate">0</span> кредитов/сек
+                </div>
+            </div>
+            
+            <div class="clicker-area" id="clicker">
+                <img src="https://cdn-icons-png.flaticon.com/128/8146/8146680.png" alt="Кликай!" class="clicker-image">
+                <div class="click-effect"></div>
+            </div>
+            
+            <div class="upgrades">
+                <h3>Улучшения</h3>
+                <div class="upgrade" id="auto-clicker">
+                    <h5>Авто-Кликер</h5>
+                    <p>Генерирует 1 кредит в секунду</p>
+                    <p>Стоимость: <span class="cost">10</span> кредитов</p>
+                    <p>Куплено: <span class="owned">0</span></p>
+                    <button class="btn btn-primary buy-btn">Купить</button>
+                </div>
+                
+                <div class="upgrade" id="mega-clicker">
+                    <h5>Мега-Кликер</h5>
+                    <p>Каждый клик дает 2x кредитов</p>
+                    <p>Стоимость: <span class="cost">50</span> кредитов</p>
+                    <p>Куплено: <span class="owned">0</span></p>
+                    <button class="btn btn-primary buy-btn">Купить</button>
+                </div>
+                
+                <div class="upgrade" id="space-mine">
+                    <h5>Космическая Шахта</h5>
+                    <p>Генерирует 5 кредитов в секунду</p>
+                    <p>Стоимость: <span class="cost">200</span> кредитов</p>
+                    <p>Куплено: <span class="owned">0</span></p>
+                    <button class="btn btn-primary buy-btn">Купить</button>
+                </div>
+                
+                <div class="upgrade" id="space-farm">
+                    <h5>Космическая Ферма</h5>
+                    <p>Генерирует 2 кредита в секунду</p>
+                    <p>Стоимость: <span class="cost">150</span> кредитов</p>
+                    <p>Куплено: <span class="owned">0</span></p>
+                    <button class="btn btn-primary buy-btn">Купить</button>
+                </div>
+                
+                <div class="upgrade" id="quantum-accelerator">
+                    <h5>Квантовый Ускоритель</h5>
+                    <p>+20% к доходу всех генераторов</p>
+                    <p>Стоимость: <span class="cost">300</span> кредитов</p>
+                    <p>Куплено: <span class="owned">0</span></p>
+                    <button class="btn btn-primary buy-btn">Купить</button>
+                </div>
+                
+                <div class="upgrade" id="planet-booster">
+                    <h5>Планетарный Бустер</h5>
+                    <p>+10% к эффективности всех улучшений</p>
+                    <p>Стоимость: <span class="cost">500</span> кредитов</p>
+                    <p>Куплено: <span class="owned">0</span></p>
+                    <button class="btn btn-primary buy-btn">Купить</button>
+                </div>
+            </div>
+            
+            <div class="stats">
+                <h3>Статистика</h3>
+                <canvas id="statsChart"></canvas>
+                <p>Всего кликов: <span id="totalClicks">0</span></p>
+                <p>Время игры: <span id="playTime">0</span> сек</p>
+                <p>Куплено улучшений: <span id="totalUpgrades">0</span></p>
+            </div>
         </div>
     </div>
     
-    <!-- Звуки -->
-    <audio id="clickSound" src="click.mp3" preload="auto"></audio>
-    <audio id="achievementSound" src="achievement.mp3" preload="auto"></audio>
+    <!-- Модальное окно сброса -->
+    <div id="reset-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>Подтверждение сброса</h3>
+            <p>Вы уверены, что хотите полностью сбросить прогресс игры? Это действие нельзя отменить!</p>
+            <div class="modal-buttons">
+                <button id="confirm-reset" class="modal-btn confirm-btn">Да, сбросить</button>
+                <button id="cancel-reset" class="modal-btn cancel-btn">Отмена</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Окно достижений -->
+    <div id="achievement-modal" class="achievement-modal">
+        <div class="achievement-content">
+            <h3>Достижение разблокировано!</h3>
+            <h4 class="achievement-title"></h4>
+            <p class="achievement-desc"></p>
+            <p class="achievement-reward"></p>
+            <button class="achievement-close-btn">OK</button>
+        </div>
+    </div>
+    
+    <canvas id="confetti-canvas"></canvas>
     
     <script src="работа.js"></script>
 </body>
